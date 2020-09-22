@@ -1,5 +1,8 @@
 language: java
 jdk: openjdk15
+os:
+  - linux
+  - osx
 
 script:
   - mvn package
