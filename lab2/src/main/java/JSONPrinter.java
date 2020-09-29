@@ -44,12 +44,19 @@ public class JSONPrinter {
         }
     }
 
+    private static String strCompile(Object o){
+        if(o instanceof String){
+            return "\""+o.toString()+"\"";
+        }
+        return o.toString();
+    }
+
     @SuppressWarnings("unchecked")
     public static String toJSON(Record record) {
         Class classe = record.getClass();
         return Arrays.stream(classe.getRecordComponents())
-                .map(e -> e.toString()+" "+JSONPrinter.strComponent(e.getAccessor(), record).toString())
-                .collect(Collectors.joining(","));
+                .map(e -> "\""+e.toString()+"\""+":"+ JSONPrinter.strCompile(JSONPrinter.strComponent(e.getAccessor(), record)))
+                .collect(Collectors.joining(",","{","}"));
 
         //return Arrays.stream(classe.getRecordComponents()).map(RecordComponent::toString).collect(Collectors.joining(","));
         /*String str = "";
