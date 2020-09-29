@@ -55,8 +55,17 @@ public class JSONPrinter {
     public static String toJSON(Record record) {
         Class classe = record.getClass();
         return Arrays.stream(classe.getRecordComponents())
-                .map(e -> "\""+e.toString()+"\""+":"+ JSONPrinter.strCompile(JSONPrinter.strComponent(e.getAccessor(), record)))
+                .map(e -> {
+                    var nameField = e.isAnnotationPresent(JSONProperty.class)
+                            ? e.getAnnotation(JSONProperty.class).value()
+                            : e.toString();
+                    return "\""+nameField+"\""+":"+ JSONPrinter.strCompile(JSONPrinter.strComponent(e.getAccessor(), record));
+                })
                 .collect(Collectors.joining(",","{","}"));
+
+        /*return Arrays.stream(classe.getRecordComponents())
+                .map(e -> "\""+e.toString()+"\""+":"+ JSONPrinter.strCompile(JSONPrinter.strComponent(e.getAccessor(), record)))
+                .collect(Collectors.joining(",","{","}"));*/
 
         //return Arrays.stream(classe.getRecordComponents()).map(RecordComponent::toString).collect(Collectors.joining(","));
         /*String str = "";

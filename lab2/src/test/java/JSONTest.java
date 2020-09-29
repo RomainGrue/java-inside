@@ -1,4 +1,5 @@
 
+import com.sun.source.tree.LambdaExpressionTree;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -9,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JSONTest {
     public Alien alien = new Alien(120, "Xenux");
     public Person person = new Person("Jean", "Dujard");
+
+    record Book(@JSONProperty("book-title") String title, int year) { }
 
     /*@Test
     public void shouldReturnRightStringforAlien(){
@@ -38,5 +41,11 @@ public class JSONTest {
     public void shouldReturnRightMapforPerson(){
         Map<String, Object> mapExpected = IncompleteJSONParser.parse("{ \"java.lang.String firstName\":\"Jean\", \"java.lang.String lastName\":\"Dujard\" }");
         assertEquals(mapExpected, IncompleteJSONParser.parse(JSONPrinter.toJSON(person)));
+    }
+
+    @Test
+    public void shouldReturnCorrectValueWithBook(){
+        Map<String, Object> mapExpected = IncompleteJSONParser.parse("{ \"book-title\":\"Cendres\", \"int year\":2000 }");
+        assertEquals(mapExpected, IncompleteJSONParser.parse(JSONPrinter.toJSON(new Book("Cendres",2000))));
     }
 }
