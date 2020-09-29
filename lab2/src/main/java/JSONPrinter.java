@@ -1,5 +1,9 @@
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class JSONPrinter {
@@ -22,9 +26,32 @@ public class JSONPrinter {
       """.formatted(alien.age(), alien.planet());
     }*/
 
-    public static String toJSON(Record record){
+    private static Object strComponent(Method accessor, Record record) {
+        Objects.requireNonNull(record);
+        try{
+            return accessor.invoke(record);
+        } catch (IllegalAccessException e) {
+            throw (IllegalAccessError) new IllegalAccessError().initCause(e);
+        } catch (InvocationTargetException e){
+            var cause = e.getCause();
+            if(cause instanceof RuntimeException re){
+                throw re;
+            }
+            if(cause instanceof Error err){
+                throw err;
+            }
+            throw new UndeclaredThrowableException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static String toJSON(Record record) {
         Class classe = record.getClass();
-        return Arrays.stream(classe.getRecordComponents()).map(RecordComponent::toString).collect(Collectors.joining(";"));
+        return Arrays.stream(classe.getRecordComponents())
+                .map(e -> e.toString()+" "+JSONPrinter.strComponent(e.getAccessor(), record).toString())
+                .collect(Collectors.joining(","));
+
+        //return Arrays.stream(classe.getRecordComponents()).map(RecordComponent::toString).collect(Collectors.joining(","));
         /*String str = "";
         for (RecordComponent recordC : classe.getRecordComponents()){
             str += recordC.getName();

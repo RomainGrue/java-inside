@@ -17,5 +17,4 @@ public class PointTest {
         assertEquals(point.y(), 3);
     }
 
-
 }
