@@ -8,11 +8,11 @@ public class JSONTest {
 
     @Test
     public void shouldReturnRightStringforAlien(){
-        assertEquals("120;Xenux", JSONPrinter.toJSON(alien));
+        assertEquals("int age;java.lang.String planet", JSONPrinter.toJSON(alien));
     }
 
     @Test
     public void shouldReturnRightStringforPerson(){
-        assertEquals("Jean;Dujard", JSONPrinter.toJSON(alien));
+        assertEquals("java.lang.String firstName;java.lang.String lastName", JSONPrinter.toJSON(person));
     }
 }
